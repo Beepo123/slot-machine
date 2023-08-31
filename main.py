@@ -1,7 +1,7 @@
 import random
 
 MAX_LINES = 3
-MAX_BET = 100
+MAX_BET = 1_000_000
 MIN_BET = 5
 
 ROWS = 3
@@ -13,6 +13,31 @@ symbol_count = {
     "B": 4,
     "C": 8,
 }
+
+
+def spin_slot_machine(ROWS, COLS, symbols):
+    slot_machine = [[0 for _ in range(COLS)] for _ in range(ROWS)]
+    # for each COL spin machine ROW times
+    for i in range(COLS):
+        # for each COL reset all odds
+        symbols_copy = dict(symbols)
+        for j in range(ROWS):
+            # pick symbol from the list and add it to the machine result
+            random_key = random.choices(list(symbols_copy.keys()), weights=list(symbols_copy.values()), k=1)
+            random_key = random_key[0]
+            slot_machine[i][j] = random_key
+
+            # subtract the odds of the chosen key for the next spin
+            # if odds becomes 0 delete the item from dictionary
+            symbols_copy[random_key] -= 1
+            if symbols_copy[random_key] == 0:
+                del symbols_copy[random_key]
+
+    return slot_machine
+
+
+def print_slot_machine(slot_machine):
+    pass
 
 
 def deposit():
@@ -29,7 +54,7 @@ def deposit():
     return amount
 
 
-def get_number_of_lineS():
+def get_number_of_lines():
     # ask user for number of lines to bet
     while True:
         lines = input(f"Enter number of lines to bet on (1-{MAX_LINES}): ")
@@ -65,10 +90,20 @@ def get_bet(balance, lines):
 
 def main():
     balance = deposit()
-    lines = get_number_of_lineS()
+    lines = get_number_of_lines()
     bet = get_bet(balance, lines)
     total_bet = bet * lines
     print(f"You are betting ${bet} on {lines} lines. Total bet is {total_bet}")
+    slot_machine = spin_slot_machine(ROWS, COLS, symbol_count)
 
-
+    result = []
+    for i in range(len(slot_machine[0])):
+        temp = []
+        for j in range(len(slot_machine)):
+            print(slot_machine[i][j], end=" ")
+            temp.append(slot_machine[i][j])
+        result.append(temp)
+        print("")
+    
+    print(result)
 main()
