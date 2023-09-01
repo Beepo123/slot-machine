@@ -1,3 +1,5 @@
+# A game of slot machine
+
 import random
 
 MAX_LINES = 3
@@ -16,16 +18,20 @@ symbol_count = {
 
 
 def spin_slot_machine(ROWS, COLS, symbols):
+    """A function that will spin the slot machine
+        to get three columns with three rows each column."""
+    # create 2d list with zeroes as initial value
     slot_machine = [[0 for _ in range(COLS)] for _ in range(ROWS)]
+
     # for each COL spin machine ROW times
-    for i in range(COLS):
+    for row in range(COLS):
         # for each COL reset all odds
         symbols_copy = dict(symbols)
-        for j in range(ROWS):
+        for col in range(ROWS):
             # pick symbol from the list and add it to the machine result
             random_key = random.choices(list(symbols_copy.keys()), weights=list(symbols_copy.values()), k=1)
             random_key = random_key[0]
-            slot_machine[i][j] = random_key
+            slot_machine[row][col] = random_key
 
             # subtract the odds of the chosen key for the next spin
             # if odds becomes 0 delete the item from dictionary
@@ -37,7 +43,23 @@ def spin_slot_machine(ROWS, COLS, symbols):
 
 
 def print_slot_machine(slot_machine):
-    pass
+    result = []
+    for row in range(len(slot_machine[0])):
+        temp = []
+        for col in range(len(slot_machine)):
+            print(slot_machine[row][col], end=" ")
+            temp.append(slot_machine[row][col])
+        result.append(temp)
+        print()
+    
+    return result
+
+
+def is_winner(result, lines):
+    """Check to see how many of the rows have equal symbols"""
+    final_result = [0 if len(set(value)) > 1 else 1 for value in result]
+    lines_won = final_result.count(1)
+    print(f"lines won is {lines_won}")
 
 
 def deposit():
@@ -49,7 +71,7 @@ def deposit():
             if amount > 0:
                 break
         else:
-            print("Enter a number: ")
+            print("Enter a number")
 
     return amount
 
@@ -94,16 +116,11 @@ def main():
     bet = get_bet(balance, lines)
     total_bet = bet * lines
     print(f"You are betting ${bet} on {lines} lines. Total bet is {total_bet}")
-    slot_machine = spin_slot_machine(ROWS, COLS, symbol_count)
 
-    result = []
-    for i in range(len(slot_machine[0])):
-        temp = []
-        for j in range(len(slot_machine)):
-            print(slot_machine[i][j], end=" ")
-            temp.append(slot_machine[i][j])
-        result.append(temp)
-        print("")
-    
-    print(result)
+    slot_machine = spin_slot_machine(ROWS, COLS, symbol_count)
+    result = print_slot_machine(slot_machine)
+
+    is_winner(result, lines)
+
+
 main()
