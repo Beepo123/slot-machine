@@ -1,3 +1,4 @@
 .vscode
 tempCodeRunnerFile.py
 test.py
+__pycache__

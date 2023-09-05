@@ -60,6 +60,16 @@ def is_winner(result, lines):
     final_result = [0 if len(set(value)) > 1 else 1 for value in result]
     lines_won = final_result.count(1)
     print(f"lines won is {lines_won}")
+    return lines_won
+
+
+def update_balance(balance, bet, lines_won):
+    if lines_won > 0:
+        balance = balance + bet*lines_won
+    else:
+        balance -= bet
+
+    return balance
 
 
 def deposit():
@@ -112,15 +122,18 @@ def get_bet(balance, lines):
 
 def main():
     balance = deposit()
-    lines = get_number_of_lines()
-    bet = get_bet(balance, lines)
-    total_bet = bet * lines
-    print(f"You are betting ${bet} on {lines} lines. Total bet is {total_bet}")
+    while True:
+        lines = get_number_of_lines()
+        bet = get_bet(balance, lines)
+        total_bet = bet * lines
+        print(f"You are betting ${bet} on {lines} lines. Total bet is {total_bet}")
 
-    slot_machine = spin_slot_machine(ROWS, COLS, symbol_count)
-    result = print_slot_machine(slot_machine)
+        slot_machine = spin_slot_machine(ROWS, COLS, symbol_count)
+        result = print_slot_machine(slot_machine)
 
-    is_winner(result, lines)
+        lines_won = is_winner(result, lines)
+        balance = update_balance(balance, bet, lines_won)
+        print(f"Your new balance is {balance}")
 
-
-main()
+if __name__ == '__main__':
+    main()
